@@ -1,0 +1,67 @@
+# MOTION CHART USANDO GOOGLEVIS
+
+library(foreign)
+library(xlsx)
+library(data.table)
+
+SalarioxSectorxRegionMA <- read.csv("TotalAnnualWagesxSectorxRegionMA.csv",header = TRUE)
+names(SalarioxSectorxRegionMA)
+SalarioxSectorxRegionMA<-SalarioxSectorxRegionMA[,-2]
+names(SalarioxSectorxRegionMA)
+
+demo(package='googleVis')
+
+#MOTIONCHART
+install.packages("googleVis")
+library(googleVis)
+
+
+#si solo queremos graficar la region 1
+
+#R <-gvisMotionChart(SalarioxSectorxRegionMA[SalarioxSectorxRegionMA$region==1,], timevar = "Año",idvar = "SectorDescrip", yvar="SalarioPromedio") 
+#plot(R)
+
+#4 columnas
+#id: primeras columnas: region y año
+#como queremos que los sectores vayan en las colunas, esa va a ser la variable que va a ir variando,vnames va a ser ese relleno
+#timevar: van a ser las columnas, es aquella variable que se agrega a las columnas
+
+#reshape 1: region-año-sector1promedio-setor2promedio-...
+#vnames: datos es SALARIO PROEMDIO
+#timevar: lo que seran mis columnas, SectorDescrip
+#idvar: primeras columnas, region y año
+
+SalarioxSectorxRegionMA2 <- reshape(SalarioxSectorxRegionMA, v.names = "SalarioPromedio",timevar = "SectorDescrip",idvar = c("region","Año"),direction = "wide")
+
+mysettings1<-'{"dimensions":{"iconDimensions":["dim0"]},"playDuration":15000,"yLambda":1,"nonSelectedAlpha":0.4,"sizeOption":"_UNISIZE","xZoomedDataMax":1420070400000,"orderedByX":false,"iconType":"LINE","time":"2015","orderedByY":false,"xZoomedIn":false,"yAxisOption":"2","yZoomedDataMax":1000000,"yZoomedIn":false,"xAxisOption":"_TIME","xLambda":1,"showTrails":false,"duration":{"multiplier":1,"timeUnit":"Y"},"xZoomedDataMin":820454400000,"iconKeySettings":[],"yZoomedDataMin":0,"uniColorForNonSelected":false,"colorOption":"_UNIQUE_COLOR"}'
+M <-gvisMotionChart(SalarioxSectorxRegionMA2,idvar = "region",timevar = "Año", options=list(mysettings1))  
+
+plot(M)
+
+#reshape 2: sector-año-region1promedio-region2promedio
+
+#vnames: datos es SALARIO PROEMDIO
+#timevar: lo que seran mis columnas, Region
+#idvar: primeras columnas, sector y año
+
+SalarioxSectorxRegionMA3 <- reshape(SalarioxSectorxRegionMA, v.names = "SalarioPromedio",timevar = "region",idvar = c("SectorDescrip","Año"),direction = "wide")
+
+G <- gvisMotionChart(SalarioxSectorxRegionMA3, idvar = "SectorDescrip",timevar="Año", options=list(mysettings1))
+
+plot(G) 
+
+  
+
+#ejemplo básico de las frutas
+  
+  
+  
+Fruits <- read.csv("Fruits.csv",header = TRUE)
+
+data("Fruits")
+Fruits[, -7] # ignore column 7
+
+(columna fruta y año como id y tiempo respectivamente)
+M <- gvisMotionChart(Fruits, idvar = "Fruit", timevar = "Year")
+plot(M)
+
