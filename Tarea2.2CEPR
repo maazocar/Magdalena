@@ -1,0 +1,52 @@
+###
+Siguiendo la misma estructura que entrega el markdown, y considerando el script Empleo0709_Motion.Rmd... aun así no arroja el html 
+de manera correcta. Si entrga el enunciado de la página pero no hace el gráfico
+
+
+---
+title: "Motion Charts"
+author: "Magdalena Azócar"
+date: "2 de agosto de 2017"
+output: html_document
+---
+
+######Este gráfico muestra el Salario por sectores y por regiones de Chile, desde el año 1996 al 2015.
+
+```{r results='asis',tidy=TRUE, include=FALSE}
+library(foreign)
+library(xlsx)
+library(data.table)
+library(googleVis)
+library(htmlwidgets)
+
+SalarioxSectorxRegionMA <- read.csv("TotalAnnualWagesxSectorxRegionMA.csv",header = TRUE)
+SalarioxSectorxRegionMA<-SalarioxSectorxRegionMA[,-2]
+
+SalarioxSectorxRegionMA2 <- reshape(SalarioxSectorxRegionMA, v.names = "SalarioPromedio",timevar = "SectorDescrip",idvar = c("region","Año"),direction = "wide")
+
+
+mysettings1<-'{"dimensions":{"iconDimensions":["dim0"]},"playDuration":15000,"yLambda":1,"nonSelectedAlpha":0.4,"sizeOption":"_UNISIZE","xZoomedDataMax":1420070400000,"orderedByX":false,"iconType":"LINE","time":"2015","orderedByY":false,"xZoomedIn":false,"yAxisOption":"2","yZoomedDataMax":1000000,"yZoomedIn":false,"xAxisOption":"_TIME","xLambda":1,"showTrails":false,"duration":{"multiplier":1,"timeUnit":"Y"},"xZoomedDataMin":820454400000,"iconKeySettings":[],"yZoomedDataMin":0,"uniColorForNonSelected":false,"colorOption":"_UNIQUE_COLOR"}'
+
+```
+
+## R Markdown
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{results='asis', echo=FALSE, tidy=TRUE}
+
+
+M <-gvisMotionChart(SalarioxSectorxRegionMA2,idvar = "region",timevar = "Año", options=list(mysettings1))  
+plot(M)
+
+```
+
+
+
